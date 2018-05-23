@@ -1,0 +1,18 @@
+{
+  "name": "squealize-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "luigi",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.3.2",
+    "mysql2": "^1.5.3",
+    "reflect-metadata": "^0.1.12",
+    "sequelize": "^4.37.8",
+    "sequelize-typescript": "^0.6.5-beta.2"
+  }
+}
