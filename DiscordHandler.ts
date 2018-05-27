@@ -8,15 +8,16 @@ export default class DiscordHandler {
     public readonly commands: Map<String, CommandBase>;
     public readonly aliasess: Map<String, String>;
     public static readonly prefix: string = '!'; //TODO configurable
+    
 
-    constructor() {
+    constructor(botToken:string) {
         this.dsBot = new Discord.Client();
         this.commands = new Map();
         this.aliasess = new Map();
-        this.handle();
+        this.handle(botToken);
     }
 
-    protected handle() {
+    protected handle(botToken:string) {
         //constantes    
         const cmdPath: string = "./discord/commands/";
         const eventPath: string = "./discord/events/";
@@ -45,7 +46,7 @@ export default class DiscordHandler {
 
         });
 
-        this.dsBot.login("MzkyNzk4NzYwNzQ2NDgzNzEy.DRt3LQ.gXArB7fOAbb_W1fcr_MSJvbWibo");
+        this.dsBot.login(botToken);
     }
 
     static 

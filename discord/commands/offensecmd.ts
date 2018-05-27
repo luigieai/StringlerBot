@@ -5,9 +5,7 @@ import Offense from "../../models/Offense";
 
 export default class OffenseCmd implements CommandBase {
 
-    constructor() {
-
-    }
+    constructor() { }
 
     run(client: Client, msg: Message, args: any[]): void {
         let emojiSob : string = '😭';
