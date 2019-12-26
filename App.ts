@@ -3,11 +3,6 @@ import DiscordHandler from './DiscordHandler';
 import Offense from './models/Offense';
 import * as config from './botconfig';
 
-console.log(config.database.host);
-console.log(config.database.database);
-console.log(config.database.username);
-console.log(config.database.password);
-
 let host : string = config.database.host;
 let database : string = config.database.database;
 let username : string = config.database.username;

@@ -61,7 +61,7 @@ export default class OffenseCmd implements CommandBase {
                 let ofensa : string = args.slice(1).join(" ")
                 let autor : string = msg.author.id;  
                 let data : Date = new Date(); //Cria uma nova data com o tempo atual do sistema
-                let aprovado : boolean = true;//    MUDAR PRA FALSE DPS
+                let aprovado : boolean = true;//    MUDAR PRA FALSE DPS -> realmente KKKKKKKKKKKKKKKK
                 let obj = new Offense({name: ofensa, creator: autor,
                                          creation: data, approved: aprovado});
                 obj.save()
