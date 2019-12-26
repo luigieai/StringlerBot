@@ -7,7 +7,12 @@ let host : string = config.database.host;
 let database : string = config.database.database;
 let username : string = config.database.username;
 let password : string = config.database.password;
-let token :  string = config.token.token;
+let devMode : boolean = process.env.NODE_ENV == 'development' || false;
+let token :  string; 
+
+if(devMode){
+    token = config.token.devtoken;
+} else token = config.token.token;
 
 export const sequelize = new Sequelize({
     host: host,
@@ -20,8 +25,7 @@ export const sequelize = new Sequelize({
 
 
 sequelize.authenticate().then( () => {
-    Offense.sync();
-    new DiscordHandler(token);
+    Offense.sync().then(() => new DiscordHandler(token));
 }).catch( err => {
     console.error('Nao foi possivel conectar a database');
 });

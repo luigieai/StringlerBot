@@ -1,17 +1,16 @@
 import { Client, Message } from "discord.js";
 import CommandBase from "./CommandBase";
 import DiscordHandler from "../DiscordHandler";
-import { EMSGSIZE } from "constants";
+import OffenseCmd from "./commands/offensecmd";
 
 export default class CommandHandler {
     readonly dsClient: Client;
-    readonly commands: Map<String, CommandBase>;
-    readonly aliases: Map<String, String>;
+    readonly commands: Map<String, CommandBase> = new Map();
+    readonly aliases: Map<String, String> = new Map();
 
-    constructor(dsClient: Client, commands: Map<String, CommandBase>, aliases: Map<String, String>) {
+    constructor(dsClient: Client) {
         this.dsClient = dsClient;
-        this.commands = commands;
-        this.aliases = aliases;
+        this.addCommand(new OffenseCmd());
     }
 
     public handleCommands() {
@@ -30,6 +29,11 @@ export default class CommandHandler {
                 cmd.run(this.dsClient, message, args);
             }
         });
+    }
+
+    public addCommand(cmd : CommandBase){
+        this.commands.set(cmd.name.toLocaleLowerCase(), cmd);
+        cmd.aliases.forEach((items) => this.aliases.set(items, cmd.name.toLocaleLowerCase())); //Não podemos nos esquecer dos aliases
     }
 
 }

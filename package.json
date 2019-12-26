@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "start": "tsc ; cd build/ && node ./App.js",
+    "dev" : "tsc ; cd build/ && NODE_ENV=development node ./App.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "luigi",
