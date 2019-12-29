@@ -7,7 +7,7 @@ export default class OffenseCmd implements CommandBase {
 
     constructor() { }
 
-    run(client: Client, msg: Message, args: any[]): void {
+    async run(client: Client, msg: Message, args: any[]): Promise<void> {
         let emojiSob : string = '😭';
         let m : string = 'To offend someone, use !offense [User]\n';
         m += 'To add an offense: !offense add [offense]\n'
@@ -35,20 +35,17 @@ export default class OffenseCmd implements CommandBase {
             }
 
             //Agora sim podemos ofender a vontade!
-            Offense.findOne({
+            let result : Offense = await Offense.findOne({
                 where: {approved: true},
                 order: [Sequelize.fn('RAND')]
-            }).then(result => {
-                if(result == null){ //Achou nada
-                    msg.reply(`Sorry, but i don't have any offense right now :sob: \n` 
-                    +`You can add an offense using !offense add [offense]`);
-                    return;
-                }
-                let finalMsg : string = result.name.replace('{user}','<@'+msg.mentions.members.first().user.id+'>');
-                msg.channel.send(finalMsg);
-                
             });
-
+            if(result == null){ //Achou nada
+                msg.reply(`Sorry, but i don't have any offense right now :sob: \n` 
+                +`You can add an offense using !offense add [offense]`);
+                return;
+            }
+            let finalMsg : string = result.name.replace('{user}','<@'+msg.mentions.members.first().user.id+'>');
+            msg.channel.send(finalMsg);
         }
         else if(args.length >= 2){
             if(args[0] !== 'add'){
@@ -61,12 +58,11 @@ export default class OffenseCmd implements CommandBase {
                 let ofensa : string = args.slice(1).join(" ")
                 let autor : string = msg.author.id;  
                 let data : Date = new Date(); //Cria uma nova data com o tempo atual do sistema
-                let aprovado : boolean = true;//    MUDAR PRA FALSE DPS -> realmente KKKKKKKKKKKKKKKK
+                let aprovado : boolean = true;//    MUDAR PRA FALSE DPS
                 let obj = new Offense({name: ofensa, creator: autor,
                                          creation: data, approved: aprovado});
-                obj.save()
-                .then(() =>
-                msg.reply('Offense created successfully! Currently waiting approvation from administrator.'));
+                await obj.save();
+                msg.reply('Offense created successfully! Currently waiting approvation from administrator.');
             }
         }
     }
@@ -75,5 +71,4 @@ export default class OffenseCmd implements CommandBase {
     readonly aliases = ['ofensa'];
     readonly description = "Generate an random offense!";
     readonly enabled = true;
-    readonly usage = "/offense";
 }

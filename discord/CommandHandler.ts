@@ -2,14 +2,19 @@ import { Client, Message } from "discord.js";
 import CommandBase from "./CommandBase";
 import DiscordHandler from "../DiscordHandler";
 import OffenseCmd from "./commands/offensecmd";
+import ModuleHandler from "./ModuleHandler";
+import Module from "./Module";
 
 export default class CommandHandler {
     readonly dsClient: Client;
     readonly commands: Map<String, CommandBase> = new Map();
     readonly aliases: Map<String, String> = new Map();
+    private  mdHandler: ModuleHandler;
 
-    constructor(dsClient: Client) {
+    constructor(dsClient: Client, mdHandler: ModuleHandler) {
         this.dsClient = dsClient;
+        this.mdHandler = mdHandler;
+        this.injectModules();
         this.addCommand(new OffenseCmd());
     }
 
@@ -34,6 +39,20 @@ export default class CommandHandler {
     public addCommand(cmd : CommandBase){
         this.commands.set(cmd.name.toLocaleLowerCase(), cmd);
         cmd.aliases.forEach((items) => this.aliases.set(items, cmd.name.toLocaleLowerCase())); //Não podemos nos esquecer dos aliases
+    }
+
+    private injectModules(){
+        //A gente faz um loop pelos módulos
+        this.mdHandler.modules.forEach((md : Module) => {
+            //Se o módulo tiver comandos a gente faz outro loop nele
+            if(md.commands.length > 0){
+                //Para cada comando do módulo, a gente registra o comando no Handler juntamente com os aliases
+                md.commands.forEach((cmd : CommandBase) => {
+                    this.commands.set(cmd.name.toLocaleLowerCase(), cmd);
+                    cmd.aliases.forEach((items) => this.aliases.set(items, cmd.name.toLocaleLowerCase())); 
+                });
+            }
+        });
     }
 
 }

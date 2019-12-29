@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js';
 import CommandHandler from './discord/CommandHandler';
-import AntiDelete from './discord/modules/AntiDelete';
+import ModuleHandler from './discord/ModuleHandler';
 export default class DiscordHandler {
 
     public readonly dsBot: Discord.Client;
@@ -12,15 +12,14 @@ export default class DiscordHandler {
     }
 
     protected handle(botToken:string) {
-
+        //Modulos
+        let moduleHandler : ModuleHandler = new ModuleHandler(this.dsBot);
         //Comandos
-        let cmdHandler : CommandHandler = new CommandHandler(this.dsBot);
+        let cmdHandler : CommandHandler = new CommandHandler(this.dsBot, moduleHandler);
         cmdHandler.handleCommands();
+        console.log(`Foram carregados ${moduleHandler.modules.size} modulos`);
         console.log(`Foram carregados ${cmdHandler.commands.size} comandos`);
         this.dsBot.login(botToken).then(() => console.log(this.dsBot.user.username));
-
-        //eventos (TODO)
-        new AntiDelete(this.dsBot).handleEvent();
     }
 
 
