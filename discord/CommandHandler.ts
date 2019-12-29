@@ -1,7 +1,6 @@
 import { Client, Message } from "discord.js";
 import CommandBase from "./CommandBase";
 import DiscordHandler from "../DiscordHandler";
-import OffenseCmd from "./commands/offensecmd";
 import ModuleHandler from "./ModuleHandler";
 import Module from "./Module";
 
@@ -15,7 +14,6 @@ export default class CommandHandler {
         this.dsClient = dsClient;
         this.mdHandler = mdHandler;
         this.injectModules();
-        this.addCommand(new OffenseCmd());
     }
 
     public handleCommands() {

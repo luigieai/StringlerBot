@@ -11,7 +11,8 @@
   "author": "luigi",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.3.2",
+    "discord-paginationembed": "^1.0.3",
+    "discord.js": "^11.5.1",
     "dotenv": "^8.2.0",
     "mysql2": "^1.5.3",
     "reflect-metadata": "^0.1.12",

@@ -1,7 +1,7 @@
-import * as Discord from "discord.js"
+import { Message, PermissionResolvable } from "discord.js";
 
-export function permissionCheck(discordMessageInstance: Discord.Message, permission: Discord.PermissionResolvable): boolean {
-    if (!discordMessageInstance.member.hasPermission(permission)) {
+export function permissionCheck(msg: Message, perm: PermissionResolvable): boolean {
+    if (!msg.member.hasPermission(perm)) {
         return false;
     }
 

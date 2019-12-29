@@ -34,9 +34,17 @@ export default class AntiDelete extends Module implements EventBase {
             value : channelId,
             serverId : guild.id
         }
-        //O método upsert já faz toda a lógica de identificar se um registro com as condições já existem, se existir ele atualiza
-        //Senão ele apenas cria
-        return await ConfigBot.upsert(values);
+        let exist = await ConfigBot.findOne({
+            where: {serverId: guild.id,
+                    name: 'antidelete_channelId'}, 
+        });
+        //Se a entrada do banco de dados já existe
+        if(exist){
+           return await exist.update(values); //a gente aualiza
+        } else {
+            let nova = new ConfigBot(values); //Senão a gente cria um novo
+            return await nova.save();
+        }
     }
 
     handleEvent(): void {
@@ -56,11 +64,12 @@ export default class AntiDelete extends Module implements EventBase {
             embed.setTimestamp();
             embed.setFooter('Mensagem deletada');
 
-            msg.channel.send(embed);
             //Se tem uma mensagem de logs definida
             let channelLog = await AntiDelete.getLogID(msg.guild) as TextChannel;
             if(channelLog){
                 channelLog.send(embed);
+            } else {
+                msg.channel.send(embed); 
             }
            });
     }
