@@ -4,6 +4,8 @@ import { Sequelize } from "sequelize-typescript";
 import Offense from "../../../models/Offense";
 import * as Pagination from 'discord-paginationembed';
 import OffenseModule from "./OffenseModule";
+import { permissionCheck } from "../../utils/Checks";
+import DiscordHandler from "../../../DiscordHandler";
 
 export default class OffenseCmd implements CommandBase {
     modulo : OffenseModule;
@@ -31,13 +33,14 @@ export default class OffenseCmd implements CommandBase {
                 let privadoDoCabra = await msg.author.createDM();
                 //Pega a lista de ofensas
                 let ofensas : Offense[] = await this.modulo.listaOfensas();
+                let i : number = 0;
                 const lista = new Pagination.FieldsEmbed()
                 .setArray(ofensas)
                 .setAuthorizedUsers([msg.author.id])
                 .setChannel(privadoDoCabra)
                 .setElementsPerPage(10)
                 .setPageIndicator(true)
-                .formatField("Listinha", item => (item as Offense).name.replace('{user}','<@'+msg.author.id+'>')+ '\n');
+                .formatField("Listinha", item => `${i++} - ` + (item as Offense).name.replace('{user}','<@'+msg.author.id+'>')+ '\n');
             
                 lista.embed
                 .setColor(0x824aee)
@@ -47,6 +50,53 @@ export default class OffenseCmd implements CommandBase {
                 msg.reply(`I've sent the list in your private text channel`);
 
                 lista.build();
+                return;
+            }
+            //DELETAR
+            else if (args[0] === 'delete' || args[0] === 'deletar') {
+                //O cara vai precisar ser administrador para deletar =D
+                if(!permissionCheck(msg, "ADMINISTRATOR")){
+                    msg.reply(DiscordHandler.noPerm);
+                    return;
+                }
+                //A gente vai identificar se alguém já esta deletando (e depois adicionar uma funçõa de identificar por servidor)
+                if(this.modulo.isDeleting()){
+                    msg.reply("I'm sorry, but someone is already deleting an offense \nPlease try again in minutes");
+                    return;
+                }
+                //Abrir o pv do cabra
+                let privadoDoCabra = await msg.author.createDM();
+                //Pega a lista de ofensas
+                let ofensas: Offense[] = await this.modulo.listaOfensas();
+                let i : number = 0;
+                const lista = new Pagination.FieldsEmbed()
+                    .setArray(ofensas)
+                    .setAuthorizedUsers([msg.author.id])
+                    .setChannel(privadoDoCabra)
+                    .setElementsPerPage(10)
+                    .setPageIndicator(true)
+                    .formatField("Listinha", item => `${i++} - ` + (item as Offense).name.replace('{user}', '<@' + msg.author.id + '>') + '\n');
+
+                lista.embed
+                    .setColor(0x824aee)
+                    .setTitle('Lista de ofensas')
+                    .setDescription('Digite o número da ofensa para deletar ela');
+
+                msg.reply(`I've sent the list in your private text channel`);
+                try {
+                    lista.build();
+                    lista.on('start', () => {
+                        //Quando a lista é criada, a gente coloca o usuário como o atual deletor.
+                        this.modulo.deletingItem = msg.author.id;
+                    });
+                    lista.on('finish', () => this.modulo.setWhoIsDeleting('-1'));
+                    lista.on('expire', () => this.modulo.setWhoIsDeleting('-1'));
+                    lista.on('error', () => this.modulo.setWhoIsDeleting('-1'));
+                } catch (error) {
+                    msg.reply('An error has ocurred, please try again or contact the bot owner');
+                    return;
+                }
+ 
                 return;
             }
             //Verificar se tem mais de uma mention
@@ -61,7 +111,7 @@ export default class OffenseCmd implements CommandBase {
                 return;
             }
 
-            //Agora sim podemos ofender a vontade!
+        //Agora sim podemos ofender a vontade!
             let result : Offense = await Offense.findOne({
                 where: {approved: true},
                 order: [Sequelize.fn('RAND')]
@@ -86,11 +136,9 @@ export default class OffenseCmd implements CommandBase {
                 await obj.save();
                 msg.reply('Offense created successfully! Currently waiting approvation from administrator.');
             } else if(args[0] === 'list' || args[0] === 'lista'){
-                console.log('passou aqui?');
               return;
             }
              else{
-                 console.log('e aqui?');
                 let m : string = 'To offend someone, use !offense [User]\n';
                 m += 'To add an offense: !offense add [offense]\n'
                 m += 'You can use {user} as placeholder for Username in offense creation\n'

@@ -5,7 +5,8 @@ export default class DiscordHandler {
 
     public readonly dsBot: Discord.Client;
     public static readonly prefix: string = '!'; //TODO configurable
-
+    public static readonly noPerm: string = 'Me desculpe, mas você precisa ser administrador para esse comando'; //TODO configurable
+    
     constructor(botToken:string) {
         this.dsBot = new Discord.Client();
         this.handle(botToken);

@@ -4,6 +4,7 @@ import Module from "../Module";
 import CommandBase from "../CommandBase";
 import DiscordHandler from "../../DiscordHandler";
 import ConfigBot from '../../models/ConfigBot';
+import { permissionCheck } from "../utils/Checks";
 
 export default class AntiDelete extends Module implements EventBase {
     readonly name: string = 'AntiDelete';
@@ -91,6 +92,11 @@ export default class AntiDelete extends Module implements EventBase {
         }
         else if(args.length ==1){
             if(args[0] === 'setlog'){
+                //Se não tiver permissão, retornaaaaaaaaaaaa
+                if(!permissionCheck(msg, "ADMINISTRATOR")){
+                    msg.reply(DiscordHandler.noPerm);
+                    return;
+                }
                 let currentChannel : string = msg.channel.id;
                 let currentGuild : Guild = msg.guild;
                 //inserimos a atualização
