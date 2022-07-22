@@ -16,7 +16,7 @@
     "dotenv": "^8.2.0",
     "mysql2": "^1.5.3",
     "reflect-metadata": "^0.1.12",
-    "sequelize": "^4.37.8",
+    "sequelize": "^6.1.0",
     "sequelize-typescript": "^0.6.5-beta.2",
     "typescript": "^3.7.4"
   }
